@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Spar — 久坐办公，起身一战</title>
+  <meta name="description" content="Spar is a menu-bar micro-exercise reminder: during work hours it calls a round of push-ups, squats or calf raises — watch the demo animation, do it, log it, keep your streak. Lightweight, local-first, Tauri 2." />
+  <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f5f5f7" />
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1e1e20" />
+  <meta property="og:title" content="Spar — 久坐办公，起身一战" />
+  <meta property="og:description" content="A menu-bar micro-exercise reminder. Every hour, a round of push-ups. Log it, keep the streak." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="assets/icon-512.png" />
+  <link rel="icon" type="image/png" href="assets/icon-128.png" />
+  <link rel="apple-touch-icon" href="assets/icon-128.png" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ======= 导航 ======= -->
+  <nav class="nav">
+    <div class="container nav-inner">
+      <a class="brand" href="#top">
+        <img src="assets/icon-128.png" alt="Spar icon" class="brand-icon" />
+        <span class="brand-name">Spar</span>
+      </a>
+      <div class="nav-links">
+        <a href="#demo" data-i18n="nav.demo">Moves</a>
+        <a href="#features" data-i18n="nav.features">Features</a>
+        <a href="#roadmap" data-i18n="nav.roadmap">Roadmap</a>
+        <a href="https://github.com/xinnix/spar" class="nav-github" aria-label="GitHub">
+          <svg viewBox="0 0 16 16" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+        </a>
+        <button id="lang-toggle" class="lang-btn" aria-label="Switch language">中文</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ======= Hero ======= -->
+  <header class="hero" id="top">
+    <div class="container hero-inner">
+      <img src="assets/icon-512.png" alt="Spar app icon" class="hero-icon" />
+      <h1 class="hero-title">Spar</h1>
+      <p class="hero-tagline" data-i18n="hero.tagline">久坐办公，起身一战</p>
+      <p class="hero-sub" data-i18n="hero.sub">A menu-bar micro-exercise reminder. During work hours Spar calls a quick round — 15 squats, 10 push-ups, a 45-second wall sit — right at your desk. Watch the form demo, do it, log it, keep the streak.</p>
+      <blockquote class="hero-quote" data-i18n="hero.quote">“One round an hour. The compiler builds, you build too.”</blockquote>
+
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="https://github.com/xinnix/spar">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <span data-i18n="hero.star">Star on GitHub</span>
+        </a>
+        <a class="btn btn-ghost" href="#demo">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          <span data-i18n="hero.demo">See the moves</span>
+        </a>
+      </div>
+      <p class="hero-meta" data-i18n="hero.meta">In active development (M1 shipped) · Tauri 2 · Local-first · macOS · Windows · Linux</p>
+
+      <!-- 面板拟真：菜单栏条 + Spar 托盘图标 + 面板（回合卡内嵌真实示范动画） -->
+      <div class="mockup-scene" role="img" aria-label="Spar in the menu bar with its round panel open">
+        <div class="mb-bar">
+          <span class="mb-item" style="width:38px"></span>
+          <span class="mb-item" style="width:54px"></span>
+          <span class="mb-item" style="width:30px"></span>
+          <span class="mb-spacer"></span>
+          <span class="mb-item" style="width:26px"></span>
+          <span class="mb-item" style="width:44px"></span>
+          <span class="tray-ic">
+            <svg viewBox="0 0 32 32" width="18" height="18" aria-hidden="true">
+              <rect x="2" y="2" width="28" height="28" rx="7" class="tray-block"/>
+              <path d="M17 5 L9 16 H15.5 L14 27 L23 14.5 H16 L17 5 Z" class="tray-bolt"/>
+            </svg>
+            <i class="tray-badge orange"></i>
+          </span>
+          <span class="mb-clock">20:36</span>
+        </div>
+
+        <div class="mock">
+          <div class="mock-head">
+            <div class="mock-brand">
+              <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><rect width="24" height="24" rx="6" class="mock-brand-bg"/><path d="M13 2 L3 14 H12 L11 22 L21 10 H12 L13 2 Z" fill="#fff"/></svg>
+              <b>Spar</b>
+            </div>
+            <span class="mock-streak">🔥 <b>12</b></span>
+            <span class="mock-next" data-i18n="mock.next">Next round ~24 min</span>
+          </div>
+
+          <div class="mock-card done">
+            <div class="mock-card-main">
+              <div class="mock-card-head">
+                <span class="mock-round" data-i18n="mock.r1">Round 1</span>
+                <b class="mock-ex" data-i18n="ex.squat">Squats</b>
+                <span class="mock-goal">×15</span>
+                <span class="mock-chip done" data-i18n="mock.done">Done</span>
+              </div>
+              <div class="mock-done-info">✓ 15 <span data-i18n="mock.reps">reps</span> · 14:02</div>
+            </div>
+            <canvas class="demo-canvas mini" data-ex="squat"></canvas>
+          </div>
+
+          <div class="mock-card pending pulse">
+            <div class="mock-card-main">
+              <div class="mock-card-head">
+                <span class="mock-round" data-i18n="mock.r2">Round 2</span>
+                <b class="mock-ex" data-i18n="ex.calf_raise">Calf Raises</b>
+                <span class="mock-goal">×20</span>
+                <span class="mock-chip pending" data-i18n="mock.pending">Pending</span>
+              </div>
+              <p class="mock-cues" data-i18n="cue.calf_raise">Rise high onto the balls of your feet; pause, then lower slowly.</p>
+            </div>
+            <canvas class="demo-canvas mini" data-ex="calf_raise"></canvas>
+          </div>
+
+          <div class="mock-card pending">
+            <div class="mock-card-main">
+              <div class="mock-card-head">
+                <span class="mock-round" data-i18n="mock.r3">Round 3</span>
+                <b class="mock-ex" data-i18n="ex.wall_sit">Wall Sit</b>
+                <span class="mock-goal">45s</span>
+                <span class="mock-chip pending" data-i18n="mock.pending">Pending</span>
+              </div>
+              <p class="mock-cues" data-i18n="cue.wall_sit">Back flat on the wall, thighs parallel to the floor.</p>
+            </div>
+            <canvas class="demo-canvas mini" data-ex="wall_sit"></canvas>
+          </div>
+
+          <div class="mock-heatmap">
+            <i class="hc l1"></i><i class="hc l0"></i><i class="hc l0"></i><i class="hc l2"></i><i class="hc l1"></i><i class="hc l0"></i><i class="hc l0"></i><i class="hc l3"></i><i class="hc l1"></i><i class="hc l0"></i><i class="hc l2"></i><i class="hc l1"></i><i class="hc l1"></i><i class="hc l0"></i><i class="hc l0"></i><i class="hc l2"></i><i class="hc l3"></i><i class="hc l1"></i><i class="hc l0"></i><i class="hc l1"></i><i class="hc l2"></i><i class="hc l0"></i><i class="hc l0"></i><i class="hc l1"></i><i class="hc l2"></i><i class="hc l3"></i><i class="hc l3"></i><i class="hc l1"></i>
+          </div>
+        </div>
+      </div>
+
+      <p class="hero-caption" data-i18n="hero.caption">Three rounds a day, rotated from eight desk-friendly moves — the same stick-figure demos you see on this page run inside the app.</p>
+    </div>
+  </header>
+
+  <!-- ======= 动作库（8 个现场动画） ======= -->
+  <section class="section" id="demo">
+    <div class="container">
+      <h2 data-i18n="demo.title">The eight moves</h2>
+      <p class="section-sub" data-i18n="demo.sub">Desk-friendly, no equipment, done in under two minutes. These are the real demo animations from the app — not videos.</p>
+      <div class="demo-grid" id="demo-grid"></div>
+    </div>
+  </section>
+
+  <!-- ======= Features ======= -->
+  <section class="section" id="features">
+    <div class="container">
+      <h2 data-i18n="features.title">Why Spar</h2>
+      <p class="section-sub" data-i18n="features.sub">Reminders tell you it's time. Spar tells you what to do, shows you how, and remembers what you did.</p>
+      <div class="grid-3">
+        <div class="card feature">
+          <div class="f-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 L3 14 H12 L11 22 L21 10 H12 L13 2 Z"/></svg></div>
+          <h3 data-i18n="f1.t">Rounds, not guilt</h3>
+          <p data-i18n="f1.d">Work hours, one call every interval: “Round 2 — calf raises ×20”. Three rounds a day rotated from eight moves. Small enough to actually happen between meetings.</p>
+        </div>
+        <div class="card feature">
+          <div class="f-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M6 12h4m-2-2v4m8-1h.01M18 10h.01"/></svg></div>
+          <h3 data-i18n="f2.t">Lives in your menu bar</h3>
+          <p data-i18n="f2.d">One glanceable icon: orange when a round is waiting, green when today is done, gray off duty. Click the notification and the panel drops right under the tray.</p>
+        </div>
+        <div class="card feature">
+          <div class="f-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg></div>
+          <h3 data-i18n="f3.t">Animated form demos</h3>
+          <p data-i18n="f3.d">Every move carries a looping stick-figure demo with coaching cues — keyframed, not video, a few KB each. You always know what “good form” looks like.</p>
+        </div>
+        <div class="card feature">
+          <div class="f-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+          <h3 data-i18n="f4.t">Streak &amp; heatmap</h3>
+          <p data-i18n="f4.d">A GitHub-style contribution calendar, but for movement. Watch the greens add up, keep the 🔥 alive, and log bonus sets whenever you feel like it.</p>
+        </div>
+        <div class="card feature">
+          <div class="f-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+          <h3 data-i18n="f5.t">Local-first privacy</h3>
+          <p data-i18n="f5.d">SQLite on your machine, zero telemetry, zero cloud. The camera counting in M2 runs fully on-device too — the leaderboard (M3) only ever sees the numbers you upload.</p>
+        </div>
+        <div class="card feature">
+          <div class="f-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg></div>
+          <h3 data-i18n="f6.t">Seriously light</h3>
+          <p data-i18n="f6.d">Tauri 2 with the system WebView — no Electron. Hand-written JS, no frameworks, no bundler. The tray icon is even drawn in code, pixel by pixel.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======= How it works ======= -->
+  <section class="section" id="how">
+    <div class="container">
+      <h2 data-i18n="how.title">A round, in four beats</h2>
+      <p class="section-sub" data-i18n="how.sub">Set your work hours and interval once. Then:</p>
+      <div class="grid-4">
+        <div class="card step">
+          <span class="step-n">1</span>
+          <h3 data-i18n="how1.t">It waits</h3>
+          <p data-i18n="how1.d">Spar sits in the menu bar, off duty outside your work hours.</p>
+        </div>
+        <div class="card step">
+          <span class="step-n">2</span>
+          <h3 data-i18n="how2.t">It calls</h3>
+          <p data-i18n="how2.d">A notification names the round and the move. Snooze 10 minutes if you're mid-flow.</p>
+        </div>
+        <div class="card step">
+          <span class="step-n">3</span>
+          <h3 data-i18n="how3.t">You spar</h3>
+          <p data-i18n="how3.d">Follow the animated demo. Fifteen squats later, you're back — no one even noticed.</p>
+        </div>
+        <div class="card step">
+          <span class="step-n">4</span>
+          <h3 data-i18n="how4.t">It remembers</h3>
+          <p data-i18n="how4.d">Log the count, tick the round, and the heatmap turns another shade of green.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======= Roadmap ======= -->
+  <section class="section" id="roadmap">
+    <div class="container">
+      <h2 data-i18n="road.title">Roadmap</h2>
+      <p class="section-sub" data-i18n="road.sub">Built in the open, one milestone at a time.</p>
+      <div class="grid-3">
+        <div class="card milestone now">
+          <span class="pill green" data-i18n="road.m1.s">M1 · Shipped</span>
+          <h3 data-i18n="road.m1.t">Remind &amp; record</h3>
+          <p data-i18n="road.m1.d">Menu-bar rounds with work-hours scheduling, animated demos, manual logging, streak &amp; heatmap, zh/en, autostart.</p>
+        </div>
+        <div class="card milestone next">
+          <span class="pill orange" data-i18n="road.m2.s">M2 · Next</span>
+          <h3 data-i18n="road.m2.t">Count with the camera</h3>
+          <p data-i18n="road.m2.d">On-device pose estimation counts your reps and checks your form — with a voice coach in your ear. Verified scores, all local.</p>
+        </div>
+        <div class="card milestone">
+          <span class="pill gray" data-i18n="road.m3.s">M3 · Planned</span>
+          <h3 data-i18n="road.m3.t">Spar with friends</h3>
+          <p data-i18n="road.m3.d">Invite-code groups with weekly boards. Camera-verified rounds carry a badge; the server never sees your camera.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======= Footer ======= -->
+  <footer class="footer">
+    <div class="container">
+      <p class="footer-cta" data-i18n="footer.cta">Don't just sit there. Spar.</p>
+      <a class="btn btn-primary" href="https://github.com/xinnix/spar" data-i18n="footer.repo">Watch the repo</a>
+      <div class="footer-meta">
+        <p><a href="https://github.com/xinnix/spar">xinnix/spar</a> · <span data-i18n="footer.note">Built with Tauri 2 · data stays on your machine</span></p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="skeleton.js"></script>
+  <script src="exercises.js"></script>
+  <script src="main.js" defer></script>
+</body>
+</html>

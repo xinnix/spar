@@ -1,0 +1,36 @@
+name: Pages
+
+# 部署 landing 页到 GitHub Pages（https://xinnix.github.io/spar/）
+# 触发：site/ 有改动推到 main，或手动触发；与 Release 流水线互不干扰
+# 前置：仓库 Settings → Pages → Source 选「GitHub Actions」（仅需设置一次）
+# 注意：GitHub Free 账号的 Pages 仅支持公开仓库
+
+on:
+  push:
+    branches: [main]
+    paths: ["site/**"]
+  workflow_dispatch:
+
+permissions:
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+      - id: deployment
+        uses: actions/deploy-pages@v4

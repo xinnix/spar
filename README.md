@@ -2,6 +2,8 @@
 
 > 久坐办公，起身一战。
 
+**官网**：<https://xinnix.github.io/spar/>（`site/` 目录，GitHub Pages 部署）
+
 Spar 驻守 macOS / Windows / Linux 菜单栏，在工作时段定时提醒你打一"回合"微运动（俯卧撑、深蹲、提踵……），做完回来记录成绩，本地统计连胜与热力日历。
 
 **为什么是 Spar**：spar = 一场短交锋。每次提醒就是一回合 Round，今日任务 = Round 1/2/3。市面上的提醒器（Time Out/Stiff）靠手动点 Done、计数器（Pushup Social）是移动端无驻留——"菜单栏驻留 + 摄像头验证计数 + 排行榜"是空白。
@@ -26,9 +28,12 @@ cargo test           # 后端单测（store/reminder 15 个用例）
 辅助脚本：
 
 ```bash
-python3 scripts/preview_poses.py   # 动作关键帧火柴人对照图（调姿势角度用）
-python3 scripts/gen_app_icon.py    # 重新生成应用图标源图（再跑 npx tauri icon）
+python3 scripts/preview_poses.py            # 动作关键帧火柴人对照图（调姿势角度用）
+python3 scripts/gen_app_icon.py             # 重新生成应用图标源图（再跑 npx tauri icon）
+python3 scripts/export_site_exercises.py    # 从 store.rs 种子导出官网动作库数据
 ```
+
+官网本地预览：`cd site && python3 -m http.server 8931` → <http://127.0.0.1:8931>
 
 ## 架构
 
