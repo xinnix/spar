@@ -20,6 +20,13 @@ const I18N = {
     'mock.r1': 'Round 1', 'mock.r2': 'Round 2', 'mock.r3': 'Round 3',
     'mock.done': 'Done', 'mock.pending': 'Pending', 'mock.reps': 'reps',
 
+    // hero 面板拟真里引用的动作名/要点（与 exercises.js 数据同源）
+    'ex.pushup': 'Push-ups', 'ex.knee_pushup': 'Knee Push-ups', 'ex.squat': 'Squats',
+    'ex.calf_raise': 'Calf Raises', 'ex.wall_sit': 'Wall Sit', 'ex.desk_dip': 'Desk Dips',
+    'ex.plank': 'Plank', 'ex.jumping_jack': 'Jumping Jacks',
+    'cue.calf_raise': 'Rise high onto the balls of your feet; pause, then lower slowly.',
+    'cue.wall_sit': 'Back flat on the wall, thighs parallel to the floor.',
+
     'demo.title': 'The eight moves',
     'demo.sub': 'Desk-friendly, no equipment, done in under two minutes. These are the real demo animations from the app — not videos.',
 
@@ -99,6 +106,13 @@ const I18N = {
     'mock.next': '下一回合 ~24 分钟',
     'mock.r1': '回合 1', 'mock.r2': '回合 2', 'mock.r3': '回合 3',
     'mock.done': '完成', 'mock.pending': '待完成', 'mock.reps': '次',
+
+    // hero 面板拟真里引用的动作名/要点（与 exercises.js 数据同源）
+    'ex.pushup': '俯卧撑', 'ex.knee_pushup': '跪姿俯卧撑', 'ex.squat': '深蹲',
+    'ex.calf_raise': '提踵', 'ex.wall_sit': '靠墙静蹲', 'ex.desk_dip': '桌边臂屈伸',
+    'ex.plank': '平板支撑', 'ex.jumping_jack': '开合跳',
+    'cue.calf_raise': '脚跟尽量抬高，顶端停一拍再缓缓落下。',
+    'cue.wall_sit': '背贴墙，大腿与地面平行，膝盖不过脚尖。',
 
     'demo.title': '八个动作',
     'demo.sub': '工位友好、零器械、两分钟内完成。下面跑的是应用内的真实示范动画——不是视频。',
@@ -248,7 +262,13 @@ function applyLang() {
     el.textContent = t(el.dataset.i18n);
   });
   document.getElementById('lang-toggle').textContent = lang === 'zh' ? 'EN' : '中文';
-  renderDemoGrid();
+  // 网格重建单独兜底：exercises.js 加载失败（部署切换瞬间的缓存错配）时
+  // 只丢网格、不中断语言应用，避免出现「标题中文 + 卡片英文」的混合态
+  try {
+    renderDemoGrid();
+  } catch (e) {
+    console.error('renderDemoGrid failed:', e);
+  }
 }
 
 document.getElementById('lang-toggle').addEventListener('click', () => {
