@@ -10,9 +10,10 @@ const I18N = {
     'hero.tagline': 'Fight the sitting, one round at a time',
     'hero.sub': 'A menu-bar micro-exercise reminder. During work hours Spar calls a quick round — 15 squats, 10 push-ups, a 45-second wall sit — right at your desk. Watch the form demo, do it, log it, keep the streak.',
     'hero.quote': '“One round an hour. The compiler builds, you build too.”',
+    'hero.download': 'Download',
     'hero.star': 'Star on GitHub',
     'hero.demo': 'See the moves',
-    'hero.meta': 'In active development (M1 shipped) · Tauri 2 · Local-first · macOS · Windows · Linux',
+    'hero.meta': 'v0.1.0 · Free & open source · Tauri 2 · Local-first · macOS · Windows · Linux',
     'hero.caption': 'Three rounds a day, rotated from eight desk-friendly moves — the same stick-figure demos you see on this page run inside the app.',
 
     'mock.next': 'Next round ~24 min',
@@ -54,7 +55,6 @@ const I18N = {
     'road.m3.d': 'Invite-code groups with weekly boards. Camera-verified rounds carry a badge; the server never sees your camera.',
 
     'footer.cta': "Don't just sit there. Spar.",
-    'footer.repo': 'Watch the repo',
     'footer.note': 'Built with Tauri 2 · data stays on your machine',
 
     'mi.title': 'Installing on macOS',
@@ -90,9 +90,10 @@ const I18N = {
     'hero.tagline': '久坐办公，起身一战',
     'hero.sub': '驻守菜单栏的微运动提醒器。工作时段里，Spar 定时叫你打一回合——15 个深蹲、10 个俯卧撑、45 秒靠墙静蹲，就在工位完成。看示范、做动作、记成绩，把连胜续上。',
     'hero.quote': '“一小时一回合。编译器在构建，你也在。”',
+    'hero.download': '下载安装包',
     'hero.star': '到 GitHub 点个 Star',
     'hero.demo': '看看动作库',
-    'hero.meta': '开发中（M1 已完成）· Tauri 2 · 本地优先 · macOS · Windows · Linux',
+    'hero.meta': 'v0.1.0 · 免费开源 · Tauri 2 · 本地优先 · macOS · Windows · Linux',
     'hero.caption': '每天三回合，从 8 个工位友好动作里轮换——你在本页看到的火柴人示范，就是应用内跑的同款动画。',
 
     'mock.next': '下一回合 ~24 分钟',
@@ -134,7 +135,6 @@ const I18N = {
     'road.m3.d': '邀请码小组 + 每周榜单。摄像头验证的回合带徽章；服务器永远看不到你的摄像头。',
 
     'footer.cta': '别干坐着，来一回合。',
-    'footer.repo': '关注仓库',
     'footer.note': '基于 Tauri 2 构建 · 数据只在本机',
 
     'mi.title': '安装到 macOS',
