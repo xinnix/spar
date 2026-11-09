@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<!-- DMG 安装窗口背景图画板（660×712 逻辑尺寸；底部 ~92px 纯背景色安全区——Finder 会强制加标签栏/状态栏吃掉窗口高度，正文内容须避开）。
+     视觉与 site/index.html 的 macOS 首启指引 section 同源（固定浅色截图风），主色用 Spar 橙。
+     布局与 DMG 真实元素对齐（见 dmg-settings.py / tauri.conf.json）：
+     - Spar.app 与 Applications 图标由 Finder 画在 (180,180)/(480,180)（左上原点，icon_size 90），
+       本画板只画两点之间的橙色虚线箭头；
+     - 下半区为三步放行指引卡（①完成 ②隐私与安全性 ③仍要打开）。
+     渲染产出（改完跑一次）：
+       1. 项目根目录起 http 服务，浏览器打开 http://127.0.0.1:8931/scripts/dmg-background.html
+          视口 1320×1424（body 有 zoom:2），视口截图存 src-tauri/dmg-background@2x.png
+       2. `sips -z 712 660 dmg-background@2x.png --out dmg-background.png`
+     dmgbuild 发现同名 @2x 文件会自动用于 Retina。 -->
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<style>
+  :root {
+    --bg: #f5f5f7; --text: #1d1d1f; --text-2: #6e6e73;
+    --border: rgba(0, 0, 0, 0.1); --accent: #f59300;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    zoom: 2; /* Retina：1320×1424 实际像素（只放 body 一层，html 再叠会 4×） */
+    width: 660px; height: 712px; overflow: hidden;
+    background: var(--bg);
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Segoe UI", sans-serif;
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+    position: relative;
+  }
+  .title { position: absolute; top: 24px; width: 100%; text-align: center; font-size: 26px; font-weight: 700; letter-spacing: -0.3px; }
+  .subtitle { position: absolute; top: 64px; width: 100%; text-align: center; font-size: 13px; color: var(--text-2); }
+
+  /* 拖拽带：真实图标在 (180,180)/(480,180)，这里只画中间箭头 */
+  .dots {
+    position: absolute; left: 248px; top: 176px; width: 150px; height: 8px;
+    background-image: radial-gradient(circle, var(--accent) 3px, transparent 3.6px);
+    background-size: 19px 8px; background-repeat: repeat-x; background-position: 0 center;
+  }
+  .chev { position: absolute; left: 402px; top: 166px; color: var(--accent); }
+
+  .blocked-h { position: absolute; top: 274px; width: 100%; text-align: center; font-size: 16px; font-weight: 700; letter-spacing: -0.2px; }
+  .blocked-sub { position: absolute; top: 299px; width: 100%; text-align: center; font-size: 11.5px; color: var(--text-2); }
+
+  .cards { position: absolute; left: 18px; top: 326px; display: flex; gap: 12px; }
+  .card {
+    width: 200px; height: 244px; background: #fff; border: 1px solid var(--border);
+    border-radius: 14px; padding: 9px 9px 8px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.07);
+    display: flex; flex-direction: column;
+  }
+  .shot {
+    background: #ececee; border-radius: 9px; height: 152px;
+    display: flex; align-items: center; justify-content: center; overflow: hidden;
+  }
+  .cap { margin-top: 9px; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 13px; font-weight: 700; }
+  .n {
+    width: 18px; height: 18px; border-radius: 50%; background: var(--accent); color: #fff;
+    font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; flex: none;
+  }
+  .cap-sub { margin-top: 4px; text-align: center; font-size: 11px; color: var(--text-2); }
+
+  /* 拟真元素（固定浅色，模拟截图） */
+  .shadow { box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15), 0 0 0 0.5px rgba(0, 0, 0, 0.09); }
+  .ring { outline: 2.5px solid var(--accent); outline-offset: 2px; }
+  .bar { height: 5px; border-radius: 3px; background: #d6d6da; margin-top: 6px; }
+
+  /* 卡1：未打开 Spar 弹窗 */
+  .alert {
+    width: 176px; padding: 12px 12px 10px;
+    background: rgba(246, 246, 248, 0.98); border-radius: 10px;
+    display: flex; flex-direction: column; align-items: center; text-align: center;
+  }
+  .alert img { width: 26px; height: 26px; border-radius: 6px; margin-bottom: 6px; }
+  .alert-title { font-size: 11.5px; font-weight: 700; color: #1d1d1f; }
+  .alert-btns { display: flex; gap: 8px; margin-top: 10px; }
+  .btn-gray { font-size: 10.5px; font-weight: 600; color: #3a3a3e; background: #e4e4e8; border-radius: 6px; padding: 4px 9px; }
+  .btn-blue { font-size: 10.5px; font-weight: 600; color: #fff; background: #007aff; border-radius: 6px; padding: 4px 13px; }
+
+  /* 卡2：系统设置 */
+  .setwin { width: 182px; height: 118px; background: #fff; border-radius: 8px; display: flex; overflow: hidden; }
+  .set-side { width: 86px; background: #ececef; padding: 9px 6px; display: flex; flex-direction: column; gap: 5px; flex: none; }
+  .sbar { height: 5px; border-radius: 3px; background: #d4d4d9; }
+  .side-item {
+    font-size: 9px; font-weight: 600; color: #fff; background: #007aff;
+    border-radius: 5px; padding: 3px 4px; margin: 2px 0;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: left;
+  }
+  .set-main { flex: 1; padding: 10px 9px; display: flex; flex-direction: column; gap: 7px; }
+  .mbar { height: 5px; border-radius: 3px; background: #e3e3e7; }
+  .mbox { height: 28px; border-radius: 6px; background: #f0f0f3; }
+
+  /* 卡3：安全性面板 */
+  .secpane { width: 176px; background: #fff; border-radius: 9px; padding: 10px 11px 12px; text-align: left; }
+  .sec-title { font-size: 11px; font-weight: 700; color: #1d1d1f; padding-bottom: 7px; border-bottom: 1px solid #e5e5ea; }
+  .sec-row { display: flex; align-items: center; justify-content: space-between; gap: 6px; padding-top: 9px; }
+  .sec-row > div { flex: 1; min-width: 0; }
+  .sec-text { font-size: 10px; font-weight: 500; color: #3c3c40; white-space: nowrap; }
+  .sec-sub { font-size: 8.5px; color: #9a9aa0; margin-top: 2px; white-space: nowrap; }
+  .btn-open {
+    font-size: 10px; font-weight: 600; color: #007aff; background: #fff;
+    border: 1.2px solid #007aff; border-radius: 6px; padding: 3px 8px; white-space: nowrap; flex: none;
+  }
+</style>
+</head>
+<body>
+  <div class="title">安装 Spar 到 macOS</div>
+  <div class="subtitle">把 Spar 拖进应用程序，首次打开时放行一次。</div>
+
+  <span class="dots"></span>
+  <svg class="chev" width="26" height="24" viewBox="0 0 32 28" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 4 L27 14 L10 24"/></svg>
+
+  <div class="blocked-h">第一次打开会被拦一下，别担心</div>
+  <div class="blocked-sub">还没做签名公证，照下面三步放行一次，以后就能直接打开。</div>
+
+  <div class="cards">
+    <div class="card">
+      <div class="shot">
+        <div class="alert shadow">
+          <img src="../site/assets/icon-128.png" alt="" />
+          <p class="alert-title">未打开 Spar</p>
+          <div class="bar" style="width: 92%;"></div>
+          <div class="bar" style="width: 64%;"></div>
+          <div class="alert-btns">
+            <span class="btn-gray">移到废纸篓</span>
+            <span class="btn-blue ring">完成</span>
+          </div>
+        </div>
+      </div>
+      <div class="cap"><span class="n">1</span>点「完成」</div>
+      <div class="cap-sub">别点「移到废纸篓」</div>
+    </div>
+
+    <div class="card">
+      <div class="shot">
+        <div class="setwin shadow">
+          <div class="set-side">
+            <div class="sbar" style="width: 100%;"></div>
+            <div class="sbar" style="width: 78%;"></div>
+            <span class="side-item ring">隐私与安全性</span>
+            <div class="sbar" style="width: 88%;"></div>
+            <div class="sbar" style="width: 70%;"></div>
+            <div class="sbar" style="width: 82%;"></div>
+          </div>
+          <div class="set-main">
+            <div class="mbar" style="width: 55%;"></div>
+            <div class="mbox"></div>
+            <div class="mbar" style="width: 90%;"></div>
+            <div class="mbar" style="width: 72%;"></div>
+          </div>
+        </div>
+      </div>
+      <div class="cap"><span class="n">2</span>打开系统设置</div>
+      <div class="cap-sub">左侧选「隐私与安全性」</div>
+    </div>
+
+    <div class="card">
+      <div class="shot">
+        <div class="secpane shadow">
+          <p class="sec-title">安全性</p>
+          <div class="sec-row">
+            <div>
+              <p class="sec-text">已阻止使用 Spar</p>
+              <p class="sec-sub">来自身份不明的开发者</p>
+            </div>
+            <span class="btn-open ring">仍要打开</span>
+          </div>
+          <div class="bar" style="width: 58%; margin-top: 10px;"></div>
+        </div>
+      </div>
+      <div class="cap"><span class="n">3</span>点「仍要打开」</div>
+      <div class="cap-sub">在安全性一栏，输一次密码</div>
+    </div>
+  </div>
+</body>
+</html>

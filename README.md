@@ -21,9 +21,26 @@ Spar 驻守 macOS / Windows / Linux 菜单栏，在工作时段定时提醒你�
 ```bash
 npm install          # 安装 @tauri-apps/cli
 npx tauri dev        # 开发运行（注意：dev 模式 macOS 无系统通知，打包后才生效）
-npx tauri build      # 打包
 cargo test           # 后端单测（store/reminder 15 个用例）
 ```
+
+## 打包 macOS DMG
+
+拖动安装界面（背景图含三步安全放行指引）复用 glint 验证过的 dmgbuild 流程：
+
+```bash
+npx tauri build --bundles app    # 先出 Spar.app（约 7 MB）
+# 背景图改版：项目根起 http 服务开 scripts/dmg-background.html（视口 1320×1424 截图存 @2x），
+# 再 sips -z 712 660 出 1x；几何参数在 src-tauri/dmg-settings.py（与 tauri.conf.json dmg 块一致）
+python3 -m venv /tmp/dmgvenv && /tmp/dmgvenv/bin/pip install dmgbuild
+cd src-tauri && /tmp/dmgvenv/bin/dmgbuild \
+  -s dmg-settings.py \
+  -Dapp="$PWD/target/release/bundle/macos/Spar.app" \
+  -Dbackground="$PWD/dmg-background.png" \
+  "Spar" "target/release/bundle/dmg/Spar_$(git describe --tags --always 2>/dev/null || echo 0.1.0)_$(uname -m).dmg"
+```
+
+**首次打开**：未签名公证，按 DMG 背景上的三步放行一次（完成 → 隐私与安全性 → 仍要打开）；如提示"已损坏"执行 `xattr -cr /Applications/Spar.app`。官网有图文版：`site/index.html` 的 #macos-install 区。
 
 辅助脚本：
 
