@@ -1,0 +1,12 @@
+{
+  "name": "spar",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Spar · 微运动提醒器 — 菜单栏驻守，定时一回合",
+  "scripts": {
+    "tauri": "tauri"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2"
+  }
+}

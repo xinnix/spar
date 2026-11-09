@@ -1,0 +1,33 @@
+[package]
+name = "spar"
+version = "0.1.0"
+description = "Spar · 微运动提醒器 — 菜单栏驻守，定时一回合"
+edition = "2021"
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+# tray-icon：菜单栏驻留；macos-private-api：panel 透明窗口（玻璃效果依赖）
+tauri = { version = "2", features = ["tray-icon", "macos-private-api"] }
+# 非 macOS 平台的通知（macOS 用自建 UNUserNotificationCenter，插件桌面端无点击回调）
+tauri-plugin-notification = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+# bundled：静态编译 SQLite，免除系统依赖
+rusqlite = { version = "0.32", features = ["bundled"] }
+dirs = "5"
+chrono = { version = "0.4", default-features = false, features = ["clock"] }
+
+# macOS 原生通知（点击回调 + panel 图层圆角修复）
+[target.'cfg(target_os = "macos")'.dependencies]
+objc2 = "0.6"
+block2 = "0.6"
+objc2-foundation = "0.3"
+objc2-user-notifications = "0.3"
+objc2-app-kit = { version = "0.3", default-features = false, features = ["NSWindow", "NSResponder", "NSView", "objc2-quartz-core"] }
+
+[profile.release]
+strip = true
+lto = true
+codegen-units = 1

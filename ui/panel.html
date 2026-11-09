@@ -1,0 +1,168 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="app">
+    <!-- ============ 主视图 ============ -->
+    <div id="main-view" class="view">
+      <header>
+        <div class="brand">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <rect width="24" height="24" rx="6" fill="#2d2d33"/>
+            <path d="M13 2 L3 14 H12 L11 22 L21 10 H12 L13 2 Z" fill="#ffffff"/>
+          </svg>
+          <b>Spar</b>
+        </div>
+        <span id="streak-pill" class="pill hidden">🔥 <b>0</b></span>
+        <span class="spacer"></span>
+        <span id="next-due" class="muted small"></span>
+        <button id="lang-btn" class="ghost-btn" title="切换语言 / Language">EN</button>
+      </header>
+
+      <div id="dev-hint" class="banner hidden">
+        <span data-i18n="devHint">开发模式：系统通知在打包后的 .app 内才会生效</span>
+      </div>
+
+      <main id="round-list"></main>
+
+      <section class="block">
+        <div class="section-label"><span data-i18n="bonusSection">加练一组</span></div>
+        <div class="bonus-row">
+          <select id="bonus-ex"></select>
+          <span class="bonus-num-wrap">
+            <input id="bonus-num" type="number" min="1" value="10" />
+            <span id="bonus-unit" class="muted small">次</span>
+          </span>
+          <button id="bonus-log-btn" data-i18n="logIt">记一组</button>
+        </div>
+      </section>
+
+      <section class="block">
+        <div class="section-label">
+          <span data-i18n="statsSection">今日 · 过去半年</span>
+          <span id="today-brief" class="muted small"></span>
+        </div>
+        <div id="heatmap" class="heatmap"></div>
+        <div class="heatmap-legend muted small">
+          <span data-i18n="hmWeeks">26 周</span>
+          <span class="spacer"></span>
+          <span data-i18n="less">少</span>
+          <i class="hm-cell l0"></i><i class="hm-cell l1"></i><i class="hm-cell l2"></i><i class="hm-cell l3"></i>
+          <span data-i18n="more">多</span>
+        </div>
+      </section>
+
+      <footer>
+        <button id="settings-btn" class="ghost-btn"><span data-i18n="settings">设置</span></button>
+        <button id="fire-btn" class="ghost-btn"><span data-i18n="fireNow">现在来一回合</span></button>
+        <button id="snooze-btn" class="ghost-btn"><span data-i18n="snooze">稍后 10 分钟</span></button>
+        <span class="spacer"></span>
+        <button id="quit-btn" class="ghost-btn danger"><span data-i18n="quit">退出</span></button>
+      </footer>
+    </div>
+
+    <!-- ============ 设置视图 ============ -->
+    <div id="settings-view" class="view hidden">
+      <header class="sub-header">
+        <button id="back-btn" class="ghost-btn">‹ <span data-i18n="back">返回</span></button>
+        <b data-i18n="settingsTitle">设置</b>
+      </header>
+      <main class="settings-body">
+        <section>
+          <div class="section-label" data-i18n="reminderSection">提醒</div>
+          <div class="group-card">
+            <div class="group-row">
+              <span class="row-text" data-i18n="interval">提醒间隔</span>
+              <span class="spacer"></span>
+              <select id="interval-select">
+                <option value="30">30 min</option>
+                <option value="45">45 min</option>
+                <option value="60">60 min</option>
+                <option value="90">90 min</option>
+                <option value="120">120 min</option>
+              </select>
+            </div>
+            <div class="group-row">
+              <span class="row-text" data-i18n="workHours">工作时段</span>
+              <span class="spacer"></span>
+              <input id="work-start" type="time" value="09:00" />
+              <span class="muted">–</span>
+              <input id="work-end" type="time" value="19:00" />
+            </div>
+            <div class="group-row">
+              <span class="row-text" data-i18n="roundsPerDay">每日回合数</span>
+              <span class="spacer"></span>
+              <select id="rounds-select">
+                <option value="1">1</option><option value="2">2</option>
+                <option value="3">3</option><option value="4">4</option>
+                <option value="5">5</option><option value="6">6</option>
+              </select>
+            </div>
+            <label class="group-row switch-row">
+              <span class="row-text" data-i18n="sound">提醒声音</span>
+              <span class="spacer"></span>
+              <span class="switch"><input type="checkbox" id="sound-toggle" /><span class="slider"></span></span>
+            </label>
+          </div>
+        </section>
+        <section>
+          <div class="section-label" data-i18n="generalSection">通用</div>
+          <div class="group-card">
+            <label class="group-row switch-row">
+              <span class="row-text" data-i18n="autostart">开机自启</span>
+              <span class="spacer"></span>
+              <span class="switch"><input type="checkbox" id="autostart-toggle" /><span class="slider"></span></span>
+            </label>
+            <div class="group-row">
+              <span class="row-text" data-i18n="language">语言</span>
+              <span class="spacer"></span>
+              <select id="lang-select">
+                <option value="zh">中文</option>
+                <option value="en">English</option>
+              </select>
+            </div>
+          </div>
+        </section>
+        <section>
+          <div class="section-label" data-i18n="aboutSection">关于</div>
+          <div class="group-card about-card">
+            <div class="brand big">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <rect width="24" height="24" rx="6" fill="#2d2d33"/>
+                <path d="M13 2 L3 14 H12 L11 22 L21 10 H12 L13 2 Z" fill="#ffffff"/>
+              </svg>
+              <b>Spar</b>
+            </div>
+            <div class="muted small">
+              <span data-i18n="slogan">久坐办公，起身一战</span> · v<span id="about-version">0.1.0</span>
+            </div>
+          </div>
+        </section>
+        <div id="settings-message" class="message hidden"></div>
+      </main>
+    </div>
+
+    <!-- ============ 示范详情浮层 ============ -->
+    <div id="detail-overlay" class="overlay hidden">
+      <div class="detail-panel">
+        <header>
+          <b id="detail-name"></b>
+          <span id="detail-goal" class="muted"></span>
+          <span class="spacer"></span>
+          <button id="detail-close" class="ghost-btn">✕</button>
+        </header>
+        <canvas id="detail-canvas"></canvas>
+        <p id="detail-cues" class="cues"></p>
+      </div>
+    </div>
+
+    <div id="toast" class="toast hidden"></div>
+  </div>
+  <script src="skeleton.js"></script>
+  <script src="panel.js"></script>
+</body>
+</html>
