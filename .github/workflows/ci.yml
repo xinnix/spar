@@ -1,0 +1,50 @@
+name: CI
+
+# main 推送与 PR 的快速检查：三平台编译 + 测试 + 前端语法。
+# 这是 Windows/Linux 编译的唯一验证通道（本仓库开发者只有 mac）；
+# 完整构建/发布见 release.yml（tag 触发）。
+
+on:
+  push:
+    branches: [main]
+    paths-ignore: ["site/**", "docs/**", "**.md", "scripts/**"]
+  pull_request:
+    branches: [main]
+
+jobs:
+  check:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, ubuntu-22.04, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      # Linux 打包/编译依赖（Tauri 官方清单）：WebKitGTK 4.1 + 托盘 appindicator + rsvg
+      - name: Install Linux dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev build-essential curl wget file libxdo-dev libssl-dev libayatana-appindicator3-dev librsvg2-dev patchelf
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: Swatinem/rust-cache@v2
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Rust check + tests
+        working-directory: src-tauri
+        run: |
+          cargo check --locked
+          cargo test
+
+      - name: Frontend syntax
+        run: |
+          node --check ui/panel.js
+          node --check ui/skeleton.js
+          node --check site/main.js
+          node --check site/skeleton.js

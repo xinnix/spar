@@ -1,0 +1,113 @@
+name: Release
+
+# 打 tag（v*）触发：三平台矩阵构建（macOS 通用二进制 DMG / Linux deb+AppImage /
+# Windows MSI+NSIS），全部追加到同一 Draft Release，人工核对资产后发布。
+# 注意：softprops 三 job 并发上传同一 Draft 时会把 Draft 直接转正（glint 2026-11-04 实证），
+# 即「push tag 即发布」；标题/说明靠事后 gh release edit 补。
+# Apple Developer ID 签名与公证待账号就绪后启用（mac job 注释块）。
+# 视觉参数与本地一致：src-tauri/dmg-settings.py（与 tauri.conf.json dmg 块同步），
+# 背景图 src-tauri/dmg-background{,@2x}.png 已入库（改版流程见 README）。
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-latest
+            rust_targets: aarch64-apple-darwin,x86_64-apple-darwin
+            # --bundles app：DMG 不交给 bundler（见下方 dmgbuild 步骤）；
+            # --no-sign：不签名。无真 Developer ID 前的一切签名方案都会坏事——
+            # 自签/untrusted 证书签出的 App 在 macOS 15+ 挂载 quarantined DMG 时
+            # 被 Gatekeeper 判「已损坏，移到废纸篓」（glint v1.1.0/v1.2.0-beta 实证）；
+            # 无签名则回到宽松路径：挂载干净、启动时右键打开即可
+            tauri_args: --target universal-apple-darwin --bundles app --no-sign
+            files: src-tauri/target/universal-apple-darwin/release/bundle/dmg/*.dmg
+          - os: ubuntu-22.04
+            files: |
+              src-tauri/target/release/bundle/deb/*.deb
+              src-tauri/target/release/bundle/appimage/*.AppImage
+          - os: windows-latest
+            files: |
+              src-tauri/target/release/bundle/msi/*.msi
+              src-tauri/target/release/bundle/nsis/*.exe
+
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Linux dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev build-essential curl wget file libxdo-dev libssl-dev libayatana-appindicator3-dev librsvg2-dev patchelf
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.rust_targets }}
+
+      - uses: Swatinem/rust-cache@v2
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      # （无真 Developer ID 前不启用任何签名：untrusted 证书签出的 App 在 macOS 15+
+      # 挂载 quarantined DMG 时被判「已损坏」，见上方 tauri_args 注释。真
+      # Developer ID + 公证就绪后再启用：设 APPLE_CERTIFICATE(_PASSWORD) 环境变量，
+      # 去掉 tauri_args 里的 --no-sign，并复验挂载行为。）
+
+      - name: Build
+        timeout-minutes: 30
+        env:
+          # runner 无 FUSE，AppImage 工具链需要自解压模式（非 Linux 平台无副作用）
+          APPIMAGE_EXTRACT_AND_RUN: "1"
+        run: |
+          npm ci
+          npx tauri build ${{ matrix.tauri_args }}
+
+      # DMG 视觉打包：纯 Python 写 .DS_Store（背景图 + 图标坐标），无头可靠。
+      # bundler 的 DMG 视觉靠 osascript 驱动 Finder，无头 runner 上静默失败——
+      # 背景图进了 .background/ 但视图设置缺失，表现为「背景图不显示」。
+      - name: Package DMG with background (dmgbuild)
+        if: runner.os == 'macOS'
+        run: |
+          VERSION=$(sed -n 's/^version = "\(.*\)"/\1/p' src-tauri/Cargo.toml)
+          APP="src-tauri/target/universal-apple-darwin/release/bundle/macos/Spar.app"
+          DMG_DIR="src-tauri/target/universal-apple-darwin/release/bundle/dmg"
+          mkdir -p "$DMG_DIR"
+          python3 -m venv "$RUNNER_TEMP/dmgvenv"
+          "$RUNNER_TEMP/dmgvenv/bin/pip" install dmgbuild
+          "$RUNNER_TEMP/dmgvenv/bin/dmgbuild" \
+            -s src-tauri/dmg-settings.py \
+            -Dapp="$PWD/$APP" \
+            -Dbackground="$PWD/src-tauri/dmg-background.png" \
+            "Spar" "$DMG_DIR/Spar_${VERSION}_universal.dmg"
+
+      # 公证就绪后取消注释（需 APPLE_ID / APPLE_PASSWORD[app-specific] / APPLE_TEAM_ID secrets）
+      # - name: Notarize
+      #   if: runner.os == 'macOS'
+      #   env:
+      #     APPLE_ID: ${{ secrets.APPLE_ID }}
+      #     APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
+      #     APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+      #   run: |
+      #     APP="src-tauri/target/universal-apple-darwin/release/bundle/macos/Spar.app"
+      #     codesign --deep --force --options runtime --sign "Developer ID Application: <NAME> (<TEAMID>)" "$APP"
+      #     ditto -c -k --keepParent "$APP" Spar.zip
+      #     xcrun notarytool submit Spar.zip --apple-id "$APPLE_ID" --password "$APPLE_PASSWORD" --team-id "$APPLE_TEAM_ID" --wait
+      #     xcrun stapler staple "$APP"
+
+      - name: Upload to draft release
+        uses: softprops/action-gh-release@v2
+        with:
+          draft: true
+          files: ${{ matrix.files }}
